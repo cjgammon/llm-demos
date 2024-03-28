@@ -53,6 +53,7 @@ h1 {
   border-radius: var(--sl-border-radius-large);
   background-color: var(--sl-color-neutral-300);
   padding: var(--sl-spacing-medium);
+  align-self: flex-end;
 }
 
 .message.assistant {

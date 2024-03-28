@@ -13,7 +13,7 @@
         <h1>Chat Buddy</h1>
       </div>
       <div class="messages-container">
-        <div class="messages">
+        <div id="messages" class="messages">
           <div class="message assistant">
             Welcome to Chat Buddy! Chat Buddy is a simple chat application that
             allows you to chat with an assistant. Feel free to ask any questions
@@ -21,13 +21,21 @@
         </div>
       </div>
       <div class="input-container">
-        <sl-textarea autofocus rows="1" cols="10" resize="auto"></sl-textarea>
-        <sl-button variant="primary" pill>Submit</sl-button>
+        <sl-textarea
+          placeholder="Type a message..."
+          id="text-input"
+          autofocus
+          rows="1"
+          cols="10"
+          resize="auto"
+        ></sl-textarea>
+        <sl-button id="submit-btn" variant="primary" pill>Submit</sl-button>
       </div>
     </div>
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace-autoloader.js"
     ></script>
+    <script src="./static/main.js"></script>
   </body>
 </html>
