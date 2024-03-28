@@ -5,6 +5,8 @@ const messagesHolder = document.getElementById("messages");
 const textInput = document.getElementById("text-input");
 const submitButton = document.getElementById("submit-btn");
 
+let submitDisabled = false;
+
 function updateMessages() {
   messagesHolder.innerHTML = "";
   messages.forEach((message) => {
@@ -18,6 +20,11 @@ function updateMessages() {
 }
 
 async function submitMessage() {
+  if (submitDisabled) {
+    return;
+  }
+  submitDisabled = true;
+  submitButton.disabled = submitDisabled;
   const message = textInput.value;
   if (message) {
     messages.push({
@@ -29,6 +36,8 @@ async function submitMessage() {
 
     await requestAPI(messages);
   }
+  submitDisabled = false;
+  submitButton.disabled = submitDisabled;
 }
 
 async function requestAPI(messages) {
