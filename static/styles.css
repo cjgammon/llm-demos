@@ -1,0 +1,61 @@
+body {
+  font-family: var(--sl-font-sans);
+  margin: 0;
+}
+
+h1 {
+  margin: 0;
+}
+
+.header {
+  padding: var(--sl-spacing-medium);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  box-sizing: border-box;
+}
+
+.input-container {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  padding: var(--sl-spacing-medium);
+  box-sizing: border-box;
+  border-top: 1px solid var(--sl-color-neutral-300);
+}
+
+.input-container sl-input,
+.input-container sl-textarea {
+  flex: 1;
+  margin-right: var(--sl-spacing-large);
+  border-radius: var(--sl-border-radius-large);
+}
+
+.messages-container {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--sl-color-neutral-100);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100%;
+  padding: 0 var(--sl-spacing-medium);
+}
+
+.message {
+  margin: var(--sl-spacing-small) 0;
+  border-radius: var(--sl-border-radius-large);
+  background-color: var(--sl-color-neutral-300);
+  padding: var(--sl-spacing-medium);
+}
+
+.message.assistant {
+  align-self: flex-start;
+  background-color: var(--sl-color-primary-200);
+}
