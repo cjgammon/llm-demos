@@ -35,6 +35,7 @@ h1 {
 }
 
 .messages-container {
+  position: relative;
   flex: 1;
   overflow-y: auto;
   background-color: var(--sl-color-neutral-100);

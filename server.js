@@ -1,15 +1,44 @@
 //express server
 import express from "express";
 import path from "path";
+import dotenv from "dotenv";
+
+import Anthropic from "@anthropic-ai/sdk";
+
+dotenv.config();
 
 const __dirname = path.resolve();
 const app = express();
 
+const anthropic = new Anthropic({
+  apiKey: process.env["ANTHROPIC_API_KEY"],
+});
+
 //serve static files from static directory
-app.use(express.static("static"));
+app.use("/static", express.static(path.join(__dirname, "/static")));
+app.use(express.json());
+
+app.post("/api/anthropic", async (req, res) => {
+  const messages = req.body.messages;
+
+  try {
+    const msg = await anthropic.messages.create({
+      model: "claude-3-opus-20240229",
+      max_tokens: 1024,
+      messages,
+    });
+    res.json(msg);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.get("/api/test", async (req, res) => {
+  res.json({ message: "Hello, World!" });
+});
 
 app.get("/", (req, res) => {
-  //return index.html
   res.sendFile(__dirname + "/index.html");
 });
 
