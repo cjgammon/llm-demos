@@ -18,7 +18,41 @@ const anthropic = new Anthropic({
 app.use("/static", express.static(path.join(__dirname, "/static")));
 app.use(express.json());
 
-app.post("/api/google", async (req, res) => {
+/*
+app.post("/stream/anthropic", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  const messages = req.body.messages;
+
+  try {
+    const stream = await anthropic.messages.create({
+      model: "claude-3-opus-20240229",
+      max_tokens: 1024,
+      messages,
+      stream: true,
+    });
+    for await (const messageStreamEvent of stream) {
+      if (messageStreamEvent.delta) {
+        res.write(
+          `${JSON.stringify({
+            message: messageStreamEvent.delta.text,
+          })}>>`,
+        );
+      }
+    }
+
+    res.end();
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+*/
+
+app.post("/api/google", async (req, res) => {});
+
+app.post("/api/anthropic", async (req, res) => {
   const messages = req.body.messages;
 
   try {
