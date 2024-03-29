@@ -5,7 +5,7 @@ const messagesHolder = document.getElementById("messages");
 const textInput = document.getElementById("text-input");
 const submitButton = document.getElementById("submit-btn");
 
-const STREAM_DATA = true;
+const STREAM_DATA = false;
 
 let submitDisabled = false;
 
@@ -70,13 +70,10 @@ async function requestStream(messages) {
     }
 
     const text = new TextDecoder().decode(value);
-    console.log("text", text);
     const parts = text.split(">>");
 
-    console.log("parts", parts);
     for (const part of parts) {
       if (part) {
-        console.log("part", part);
         const json = JSON.parse(part);
         const content = json.message;
         if (content && content !== "undefined") {
@@ -112,7 +109,6 @@ async function requestAPI(messages) {
     this.updateMessages();
   } else {
     console.error("Error:", req.status, req.type, req.body);
-    //show alert
     showError("An error occurred while sending the message.");
   }
 }
@@ -130,7 +126,9 @@ function showError(message, variant = "danger", duration = 5000) {
 
   console.log("alert", alert);
   document.body.append(alert);
-  return alert.toast();
+  customElements.whenDefined("sl-alert").then(() => {
+    alert.toast();
+  });
 }
 
 async function init() {
