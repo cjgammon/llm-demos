@@ -18,7 +18,7 @@ const anthropic = new Anthropic({
 app.use("/static", express.static(path.join(__dirname, "/static")));
 app.use(express.json());
 
-app.post("/api/anthropic", async (req, res) => {
+app.post("/api/google", async (req, res) => {
   const messages = req.body.messages;
 
   try {
