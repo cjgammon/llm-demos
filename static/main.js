@@ -5,6 +5,8 @@ const messagesHolder = document.getElementById("messages");
 const textInput = document.getElementById("text-input");
 const submitButton = document.getElementById("submit-btn");
 
+const STREAM_DATA = true;
+
 let submitDisabled = false;
 
 function updateMessages() {
@@ -40,7 +42,57 @@ async function submitMessage() {
   submitButton.disabled = submitDisabled;
 }
 
+async function requestStream(messages) {
+  const stream = await fetch("./stream/anthropic", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ messages }),
+  });
+
+  const reader = stream.body.getReader();
+
+  const newMessage = {
+    role: "assistant",
+    content: "",
+  };
+
+  messages.push(newMessage);
+
+  const activeMessage = messages[messages.length - 1];
+
+  while (true) {
+    const { done, value } = await reader.read();
+
+    if (done) {
+      break;
+    }
+
+    const text = new TextDecoder().decode(value);
+    console.log("text", text);
+    const parts = text.split(">>");
+
+    console.log("parts", parts);
+    for (const part of parts) {
+      if (part) {
+        console.log("part", part);
+        const json = JSON.parse(part);
+        const content = json.message;
+        if (content && content !== "undefined") {
+          activeMessage.content += content;
+        }
+      }
+    }
+
+    updateMessages();
+  }
+}
+
 async function requestAPI(messages) {
+  if (STREAM_DATA) {
+    return await requestStream(messages);
+  }
   const req = await fetch("./api/anthropic", {
     method: "POST",
     headers: {
@@ -65,22 +117,18 @@ async function requestAPI(messages) {
   }
 }
 
-function showError(
-  message,
-  variant = "danger",
-  icon = "info-circle",
-  duration = 5000,
-) {
+function showError(message, variant = "danger", duration = 5000) {
   const alert = Object.assign(document.createElement("sl-alert"), {
     variant,
     closable: true,
     duration: duration,
     innerHTML: `
-        <sl-icon name="${icon}" slot="icon"></sl-icon>
+        <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
         ${message}
       `,
   });
 
+  console.log("alert", alert);
   document.body.append(alert);
   return alert.toast();
 }
