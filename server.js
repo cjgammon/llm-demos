@@ -2,17 +2,22 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-import Anthropic from "@anthropic-ai/sdk";
+//import Anthropic from "@anthropic-ai/sdk";
 
 dotenv.config();
 
 const __dirname = path.resolve();
 const app = express();
 
+const genAI = new GoogleGenerativeAI(process.env["GEMINI_API_KEY"]);
+
+/*
 const anthropic = new Anthropic({
   apiKey: process.env["ANTHROPIC_API_KEY"],
 });
+*/
 
 //serve static files from static directory
 app.use("/static", express.static(path.join(__dirname, "/static")));
@@ -50,8 +55,7 @@ app.post("/stream/anthropic", async (req, res) => {
 });
 */
 
-app.post("/api/google", async (req, res) => {});
-
+/*
 app.post("/api/anthropic", async (req, res) => {
   const messages = req.body.messages;
 
@@ -66,6 +70,46 @@ app.post("/api/anthropic", async (req, res) => {
     console.error(e);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+*/
+
+function convertMessagesToHistory(messages) {
+  return messages.map((message) => {
+    return {
+      role: message.role == "assistant" ? "model" : message.role,
+      parts: [{ text: message.content }],
+    };
+  });
+}
+
+app.post("/api/google", async (req, res) => {
+  const messages = req.body.messages;
+
+  const history = convertMessagesToHistory(messages);
+  const prompt = history.pop();
+
+  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+  const chat = model.startChat({
+    history,
+    generationConfig: {
+      maxOutputTokens: 1024,
+    },
+  });
+
+  const msg = prompt.parts[0].text;
+
+  const result = await chat.sendMessage(msg);
+  const response = await result.response;
+  const text = response.text();
+  res.json({
+    content: [
+      {
+        role: "assistant",
+        text: text,
+      },
+    ],
+  });
 });
 
 app.get("/api/test", async (req, res) => {

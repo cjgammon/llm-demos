@@ -43,7 +43,7 @@ async function submitMessage() {
 }
 
 async function requestStream(messages) {
-  const stream = await fetch("./stream/anthropic", {
+  const stream = await fetch("./stream/google", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -90,7 +90,7 @@ async function requestAPI(messages) {
   if (STREAM_DATA) {
     return await requestStream(messages);
   }
-  const req = await fetch("./api/anthropic", {
+  const req = await fetch("./api/google", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -101,7 +101,7 @@ async function requestAPI(messages) {
     const data = await req.json();
 
     const message = {
-      role: data.role,
+      role: data.content[0].role,
       content: data.content[0].text,
     };
 
