@@ -5,7 +5,7 @@ const messagesHolder = document.getElementById("messages");
 const textInput = document.getElementById("text-input");
 const submitButton = document.getElementById("submit-btn");
 
-const STREAM_DATA = false;
+const STREAM_DATA = true;
 
 let submitDisabled = false;
 

@@ -112,6 +112,37 @@ app.post("/api/google", async (req, res) => {
   });
 });
 
+app.post("/stream/google", async (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+  const messages = req.body.messages;
+
+  try {
+    const history = convertMessagesToHistory(messages);
+    const prompt = history.pop();
+
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+    const text = prompt.parts[0].text;
+    const result = await model.generateContentStream([text]);
+
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      res.write(
+        `${JSON.stringify({
+          message: chunkText,
+        })}>>`,
+      );
+    }
+
+    res.end();
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 app.get("/api/test", async (req, res) => {
   res.json({ message: "Hello, World!" });
 });
