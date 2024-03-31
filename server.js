@@ -124,8 +124,17 @@ app.post("/stream/google", async (req, res) => {
 
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
-    const text = prompt.parts[0].text;
-    const result = await model.generateContentStream([text]);
+    const chat = model.startChat({
+      history,
+      generationConfig: {
+        maxOutputTokens: 1024,
+      },
+    });
+
+    const msg = prompt.parts[0].text;
+
+    //const result = await model.generateContentStream([text]);
+    const result = await chat.sendMessageStream(msg);
 
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
